@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
-use std::ops::Deref;
 use std::convert::TryInto;
-use std::fmt; // Added for the Display trait
+use std::fmt;
+use std::ops::Deref; // Added for the Display trait
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub struct CompactSize {
@@ -212,7 +212,10 @@ impl TransactionInput {
         let sequence = u32::from_le_bytes(bytes[progress..progress + 4].try_into().unwrap());
         progress += 4;
 
-        Ok((Self::new(previous_output, signature_script, sequence), progress))
+        Ok((
+            Self::new(previous_output, signature_script, sequence),
+            progress,
+        ))
     }
 }
 
@@ -278,7 +281,11 @@ impl fmt::Display for BitcoinTransaction {
         writeln!(f, "Lock Time: {}", self.lock_time)?;
         for (i, input) in self.inputs.iter().enumerate() {
             writeln!(f, "  Input {}:", i)?;
-            writeln!(f, "    Previous Output Vout: {}", input.previous_output.vout)?;
+            writeln!(
+                f,
+                "    Previous Output Vout: {}",
+                input.previous_output.vout
+            )?;
         }
         Ok(())
     }
